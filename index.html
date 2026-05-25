@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScribeStack — Technical Writing for Dev Teams</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+  :root {
+    --ink: #0e0e0e;
+    --paper: #f5f2eb;
+    --accent: #c84b2f;
+    --muted: #6b6560;
+    --line: #d9d4c8;
+    --card: #ede9e0;
+  }
+ 
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+ 
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+ 
+  .logo {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+ 
+  .logo span { color: var(--accent); }
+ 
+  nav a.cta-nav {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.6rem 1.25rem;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+ 
+  nav a.cta-nav:hover { background: var(--accent); }
+ 
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 2.5rem 4rem;
+    gap: 4rem;
+    border-bottom: 1px solid var(--line);
+  }
+ 
+  .hero-left { max-width: 560px; }
+ 
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
+ 
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+ 
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+ 
+  .hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    max-width: 440px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.35s forwards;
+  }
+ 
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.45s forwards;
+  }
+ 
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 0.9rem 2rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: inline-block;
+  }
+ 
+  .btn-primary:hover { background: var(--accent); }
+ 
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    padding: 0.9rem 2rem;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+ 
+  .btn-ghost:hover { border-color: var(--ink); }
+ 
+  /* HERO RIGHT — terminal card */
+  .hero-right {
+    opacity: 0;
+    animation: fadeUp 0.6s 0.55s forwards;
+  }
+ 
+  .terminal {
+    background: #1a1a18;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+  }
+ 
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #252520;
+    border-bottom: 1px solid #333;
+  }
+ 
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #c84b2f; }
+  .dot.y { background: #e5a03a; }
+  .dot.g { background: #5ba55b; }
+ 
+  .terminal-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: #666;
+    margin-left: auto;
+    margin-right: auto;
+  }
+ 
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.9;
+  }
+ 
+  .t-comment { color: #5a5a50; }
+  .t-green { color: #7ec87e; }
+  .t-yellow { color: #e5c07b; }
+  .t-red { color: #e06c75; }
+  .t-blue { color: #61afef; }
+  .t-white { color: #abb2bf; }
+  .t-dim { color: #555; }
+ 
+  /* SERVICES */
+  .services {
+    padding: 6rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+ 
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+ 
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    max-width: 200px;
+  }
+ 
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+ 
+  .service-card {
+    background: var(--paper);
+    padding: 2.5rem 2rem;
+    transition: background 0.2s;
+  }
+ 
+  .service-card:hover { background: var(--card); }
+ 
+  .service-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.25rem;
+  }
+ 
+  .service-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+ 
+  .service-card p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+ 
+  /* WHY */
+  .why {
+    padding: 6rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+ 
+  .why h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+ 
+  .why h2 em { font-style: italic; color: var(--accent); }
+ 
+  .why p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+ 
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+ 
+  .stat {
+    border-top: 2px solid var(--ink);
+    padding-top: 1rem;
+  }
+ 
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+ 
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+ 
+  /* PRICING */
+  .pricing {
+    padding: 6rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+ 
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+ 
+  .price-card {
+    border: 1px solid var(--line);
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+ 
+  .price-card:hover {
+    border-color: var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+ 
+  .price-card.featured {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+  }
+ 
+  .price-card.featured .price-desc,
+  .price-card.featured .price-item { color: #aaa; }
+ 
+  .price-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+ 
+  .price-card.featured .price-tag { color: #e06c75; }
+ 
+  .price-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+ 
+  .price-amount {
+    font-family: 'DM Mono', monospace;
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 1rem 0;
+    color: inherit;
+  }
+ 
+  .price-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+ 
+  .price-items { list-style: none; margin-bottom: 2rem; }
+ 
+  .price-item {
+    font-size: 0.85rem;
+    color: var(--muted);
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+ 
+  .price-card.featured .price-item { border-color: #333; }
+ 
+  .price-item::before {
+    content: '→';
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+  }
+ 
+  .btn-card {
+    display: block;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.85rem;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    transition: all 0.2s;
+  }
+ 
+  .btn-card:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .price-card.featured .btn-card { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  .price-card.featured .btn-card:hover { background: #a83a20; }
+ 
+  /* CONTACT */
+  .contact {
+    padding: 6rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+ 
+  .contact h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+ 
+  .contact h2 em { font-style: italic; color: var(--accent); }
+  .contact > div > p { font-size: 0.95rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
+ 
+  .contact-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+ 
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+ 
+  .contact-item span { color: var(--accent); }
+ 
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+ 
+  .contact-form input,
+  .contact-form textarea {
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 0.85rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+ 
+  .contact-form input:focus,
+  .contact-form textarea:focus { border-color: var(--ink); }
+ 
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: var(--muted); }
+ 
+  .contact-form button {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+ 
+  .contact-form button:hover { background: var(--accent); }
+ 
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+ 
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+ 
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+ 
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.25rem; }
+    .hero { grid-template-columns: 1fr; padding: 6rem 1.25rem 3rem; gap: 2.5rem; }
+    .hero-left { max-width: 100%; }
+    .services { padding: 4rem 1.25rem; }
+    .services-grid { grid-template-columns: 1fr; }
+    .why { grid-template-columns: 1fr; padding: 4rem 1.25rem; gap: 3rem; }
+    .pricing { padding: 4rem 1.25rem; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .contact { grid-template-columns: 1fr; padding: 4rem 1.25rem; gap: 3rem; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+ 
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">Scribe<span>Stack</span></a>
+  <a class="cta-nav" href="#contact">Get a Quote</a>
+</nav>
+ 
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="eyebrow">Technical Writing · Documentation · Content</p>
+    <h1>Docs that make developers <em>actually read them.</em></h1>
+    <p class="hero-desc">ScribeStack delivers API documentation, developer guides, and technical content for software teams — written by someone who actually understands the code.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#contact">Start a Project</a>
+      <a class="btn-ghost" href="#services">See Services</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="dot r"></div>
+        <div class="dot y"></div>
+        <div class="dot g"></div>
+        <span class="terminal-title">scribestack_readme.md</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-comment"># ScribeStack API Reference</div>
+        <br>
+        <div class="t-comment">## Authentication</div>
+        <br>
+        <div class="t-white">All requests require a Bearer token</div>
+        <div class="t-white">in the Authorization header:</div>
+        <br>
+        <div class="t-blue">```http</div>
+        <div class="t-green">GET /v1/endpoint HTTP/1.1</div>
+        <div class="t-yellow">Authorization: Bearer &lt;token&gt;</div>
+        <div class="t-blue">```</div>
+        <br>
+        <div class="t-comment">## Response Format</div>
+        <br>
+        <div class="t-blue">```json</div>
+        <div class="t-white">{</div>
+        <div class="t-yellow">&nbsp;&nbsp;"status"<span class="t-white">:</span> <span class="t-green">"success"</span><span class="t-white">,</span></div>
+        <div class="t-yellow">&nbsp;&nbsp;"data"<span class="t-white">: { ... },</span></div>
+        <div class="t-yellow">&nbsp;&nbsp;"meta"<span class="t-white">: {</span></div>
+        <div class="t-yellow">&nbsp;&nbsp;&nbsp;&nbsp;"version"<span class="t-white">:</span> <span class="t-green">"1.0.2"</span></div>
+        <div class="t-white">&nbsp;&nbsp;}</div>
+        <div class="t-white">}</div>
+        <div class="t-blue">```</div>
+        <br>
+        <div class="t-dim">→ Clear. Accurate. Ship-ready.</div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-label">What We Do</div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01 —</div>
+      <h3>API Documentation</h3>
+      <p>Endpoint references, authentication guides, code samples, and error handling docs your developers will actually bookmark.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02 —</div>
+      <h3>Developer Guides</h3>
+      <p>Onboarding docs, tutorials, and integration guides that reduce support tickets and get users to their first success faster.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03 —</div>
+      <h3>Technical Blog Content</h3>
+      <p>In-depth articles and how-tos that establish your product's authority and drive organic traffic from developers searching for answers.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04 —</div>
+      <h3>White Papers</h3>
+      <p>Research-backed technical reports that communicate complex ideas to both technical and executive audiences.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05 —</div>
+      <h3>README & Setup Docs</h3>
+      <p>Open-source or internal projects need clear setup instructions. We make repos approachable and contributor-friendly.</p>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06 —</div>
+      <h3>Content Audits</h3>
+      <p>Review and rewrite existing documentation that's outdated, unclear, or incomplete — delivered with a prioritized action plan.</p>
+    </div>
+  </div>
+</section>
+ 
+<!-- WHY -->
+<section class="why" id="about">
+  <div>
+    <div class="section-label">Why ScribeStack</div>
+    <h2>Built by someone who <em>writes and codes.</em></h2>
+    <p>Most technical writers don't understand the stack. Most developers don't have time to write clearly. ScribeStack bridges that gap.</p>
+    <p>With a CS background, published academic writing, and deep knowledge of networking, OOP, and systems — the work is accurate, readable, and built to scale with your product.</p>
+    <a class="btn-primary" href="#contact" style="display:inline-block; margin-top:1rem;">Work Together</a>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">2+</div>
+      <div class="stat-label">Papers Published</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">CS</div>
+      <div class="stat-label">Degree in Progress</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">48h</div>
+      <div class="stat-label">Avg Turnaround</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Human Written</div>
+    </div>
+  </div>
+</section>
+ 
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-label">Pricing</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tag">Starter</div>
+      <h3>Project</h3>
+      <div class="price-amount">$1,000</div>
+      <p class="price-desc">One-time project. Good for a single doc set, README overhaul, or white paper.</p>
+      <ul class="price-items">
+        <li class="price-item">Up to 5,000 words</li>
+        <li class="price-item">1 revision round</li>
+        <li class="price-item">7-day delivery</li>
+        <li class="price-item">Source files included</li>
+      </ul>
+      <a class="btn-card" href="#contact">Get Started</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tag">Most Popular</div>
+      <h3>Retainer</h3>
+      <div class="price-amount">$2,500/mo</div>
+      <p class="price-desc">Ongoing monthly support. Ideal for growing startups that ship regularly.</p>
+      <ul class="price-items">
+        <li class="price-item">Up to 15,000 words/mo</li>
+        <li class="price-item">Unlimited revisions</li>
+        <li class="price-item">Priority turnaround</li>
+        <li class="price-item">Slack / async access</li>
+      </ul>
+      <a class="btn-card" href="#contact">Get Started</a>
+    </div>
+    <div class="price-card">
+      <div class="price-tag">Enterprise</div>
+      <h3>Full Audit</h3>
+      <div class="price-amount">Custom</div>
+      <p class="price-desc">Complete documentation overhaul or long-term embedded writing partner.</p>
+      <ul class="price-items">
+        <li class="price-item">Full doc audit & rewrite</li>
+        <li class="price-item">Style guide creation</li>
+        <li class="price-item">Dedicated support</li>
+        <li class="price-item">Custom SLA</li>
+      </ul>
+      <a class="btn-card" href="#contact">Let's Talk</a>
+    </div>
+  </div>
+</section>
+ 
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div>
+    <div class="section-label">Contact</div>
+    <h2>Let's build something <em>worth reading.</em></h2>
+    <p>Have a project in mind or just want to explore working together? Send a message and you'll hear back within 24 hours.</p>
+    <div class="contact-detail">
+      <div class="contact-item"><span>→</span> Gabe.Karpiel.ail@gmail.com</div>
+      <div class="contact-item"><span>→</span> Based in Chicago, IL</div>
+      <div class="contact-item"><span>→</span> Available for remote clients worldwide</div>
+    </div>
+  </div>
+  <div>
+    <div class="contact-form" id="contactForm">
+      <input type="text" id="fname" placeholder="Your name" />
+      <input type="email" id="femail" placeholder="Your email" />
+      <input type="text" id="fcompany" placeholder="Company / project" />
+      <textarea rows="5" id="fmessage" placeholder="Tell me about your project..."></textarea>
+      <button type="button" id="submitBtn" onclick="submitForm()">Send Message →</button>
+      <p id="formStatus" style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--accent);display:none;margin-top:0.5rem;"></p>
+    </div>
+    <script>
+      async function submitForm() {
+        const btn = document.getElementById('submitBtn');
+        const status = document.getElementById('formStatus');
+        const name = document.getElementById('fname').value;
+        const email = document.getElementById('femail').value;
+        const company = document.getElementById('fcompany').value;
+        const message = document.getElementById('fmessage').value;
+        if (!name || !email || !message) {
+          status.textContent = 'Please fill in name, email, and message.';
+          status.style.color = 'var(--accent)';
+          status.style.display = 'block';
+          return;
+        }
+        btn.textContent = 'Sending...';
+        btn.disabled = true;
+        try {
+          const res = await fetch('https://formspree.io/f/xpwzgvqk', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ name, email, company, message })
+          });
+          if (res.ok) {
+            status.textContent = 'Message sent! I will get back to you within 24 hours.';
+            status.style.color = '#5ba55b';
+            document.getElementById('fname').value = '';
+            document.getElementById('femail').value = '';
+            document.getElementById('fcompany').value = '';
+            document.getElementById('fmessage').value = '';
+          } else { throw new Error(); }
+        } catch {
+          status.textContent = 'Something went wrong. Email me at Gabe.Karpiel.ail@gmail.com';
+          status.style.color = 'var(--accent)';
+        }
+        btn.textContent = 'Send Message →';
+        btn.disabled = false;
+        status.style.display = 'block';
+      }
+    </script>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 ScribeStack · Gabriel Karpiel</p>
+  <p>Chicago, IL · Technical Writing for Dev Teams</p>
+</footer>
+ 
+</body>
+</html>
+ 
